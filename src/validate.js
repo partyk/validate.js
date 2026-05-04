@@ -232,6 +232,7 @@
   // ─── Továrna validátoru ────────────────────────────────────────────────────
 
   function createValidator(formEl, options) {
+    formEl.setAttribute("novalidate", "");
     const opts = Object.assign(
       {
         rules: {},
@@ -270,6 +271,7 @@
       const userRules = normalizeRule(opts.rules[el.name]);
       const html5 = {};
       if (el.required) html5.required = true;
+      if (el.classList.contains("required")) html5.required = true;
       if (el.type === "email") html5.email = true;
       if (el.type === "url") html5.url = true;
       if (el.type === "number") html5.number = true;
