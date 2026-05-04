@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>validate.js — demo</title>
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --card: #ffffff;
+    --border: #e0dbd4;
+    --text: #1a1a1a;
+    --muted: #888;
+    --accent: #2563eb;
+    --error: #dc2626;
+    --success: #16a34a;
+    --radius: 5px;
+    --mono: 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  /* ── Header ── */
+  .header { text-align: center; max-width: 580px; }
+  .header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.04em; }
+  .header h1 span { color: var(--accent); }
+  .header p { color: var(--muted); margin-top: .4rem; font-size: .9rem; }
+
+  /* ── Locale bar ── */
+  .locale-bar {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .5rem .8rem;
+    font-size: .82rem;
+  }
+  .locale-bar span { color: var(--muted); }
+  .locale-bar button {
+    padding: .25rem .65rem;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: transparent;
+    cursor: pointer;
+    font-size: .82rem;
+    color: var(--text);
+    transition: all .15s;
+  }
+  .locale-bar button:hover,
+  .locale-bar button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem 2.2rem;
+    width: 100%;
+    max-width: 540px;
+    box-shadow: 0 2px 16px rgba(0,0,0,.06);
+  }
+  .card h2 { font-size: 1rem; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: -.02em; }
+
+  /* ── Fields ── */
+  .field { margin-bottom: 1.2rem; }
+  .field-label {
+    display: block;
+    font-size: .76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--muted);
+    margin-bottom: .35rem;
+  }
+
+  input[type=text],
+  input[type=email],
+  input[type=url],
+  input[type=number],
+  input[type=password],
+  select, textarea {
+    width: 100%;
+    padding: .6rem .75rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: .92rem;
+    font-family: inherit;
+    background: #fafaf9;
+    transition: border-color .15s, box-shadow .15s;
+    color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+    background: #fff;
+  }
+
+  /* error / valid states */
+  input.error, select.error, textarea.error {
+    border-color: var(--error);
+    background: #fff8f8;
+  }
+  input.valid, select.valid, textarea.valid {
+    border-color: var(--success);
+    background: #f6fdf7;
+  }
+
+  label.error {
+    display: block;
+    color: var(--error);
+    font-size: .76rem;
+    margin-top: .3rem;
+    font-family: var(--mono);
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .88rem;
+  }
+  .checkbox-row input { width: auto; }
+
+  /* ── Submit ── */
+  button[type=submit] {
+    width: 100%;
+    padding: .72rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+    margin-top: .5rem;
+  }
+  button[type=submit]:hover { opacity: .88; }
+
+  /* ── Success box ── */
+  .success-box {
+    display: none;
+    margin-top: 1rem;
+    background: #f0fdf4;
+    border: 1.5px solid var(--success);
+    border-radius: var(--radius);
+    padding: .8rem 1rem;
+    color: var(--success);
+    font-size: .88rem;
+    font-family: var(--mono);
+  }
+
+  /* ── Code block ── */
+  .code-card {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    border-radius: 8px;
+    padding: 1.5rem 1.8rem;
+    width: 100%;
+    max-width: 540px;
+    font-family: var(--mono);
+    font-size: .8rem;
+    line-height: 1.65;
+    overflow-x: auto;
+  }
+  .code-card .title {
+    font-family: system-ui, sans-serif;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #6c7086;
+    margin-bottom: 1rem;
+  }
+  .kw  { color: #cba6f7; }
+  .fn  { color: #89dceb; }
+  .str { color: #a6e3a1; }
+  .cm  { color: #6c7086; }
+  .num { color: #fab387; }
+  .key { color: #89b4fa; }
+
+  /* ── Error counter badge ── */
+  .err-badge {
+    display: inline-block;
+    background: var(--error);
+    color: #fff;
+    border-radius: 99px;
+    font-size: .7rem;
+    font-weight: 700;
+    padding: .1em .5em;
+    margin-left: .4rem;
+    vertical-align: middle;
+    min-width: 1.4em;
+    text-align: center;
+    transition: background .2s;
+  }
+  .err-badge.zero { background: var(--success); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>validate<span>.js</span></h1>
+  <p>Vanilla JS · jQuery Validation syntax · zero dependencies · i18n</p>
+</div>
+
+<!-- Locale switcher -->
+<div class="locale-bar">
+  <span>Locale:</span>
+  <button data-locale="en" class="active">EN</button>
+  <button data-locale="cs">CS</button>
+  <button data-locale="sk">SK</button>
+  <button data-locale="de">DE</button>
+</div>
+
+<!-- Form -->
+<div class="card">
+  <h2>
+    Registration form
+    <span class="err-badge zero" id="badge">0</span>
+  </h2>
+
+  <form id="demoForm" novalidate>
+
+    <div class="field">
+      <label class="field-label" for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="min. 3 characters">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="website">Website (optional)</label>
+      <input type="url" id="website" name="website" placeholder="https://...">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="age">Age (18–99)</label>
+      <input type="number" id="age" name="age" placeholder="18">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="min. 6 characters">
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="password2">Repeat password</label>
+      <input type="password" id="password2" name="password2" placeholder="same password">
+    </div>
+
+    <div class="field">
+      <div class="checkbox-row">
+        <input type="checkbox" id="terms" name="terms">
+        <label for="terms">I agree to the terms &amp; conditions</label>
+      </div>
+    </div>
+
+    <button type="submit">Submit</button>
+
+    <div class="success-box" id="successBox">✓ Form submitted successfully!</div>
+  </form>
+</div>
+
+<!-- Code example -->
+<div class="code-card">
+  <div class="title">Usage</div>
+<pre><span class="cm">// Load locale (optional)</span>
+<span class="key">validate</span>.<span class="fn">setLocale</span>(<span class="str">'cs'</span>);
+
+<span class="cm">// Initialize — same syntax as jQuery Validation</span>
+<span class="fn">validate</span>(<span class="str">'#myForm'</span>, {
+  <span class="key">rules</span>: {
+    username: { <span class="key">required</span>: <span class="kw">true</span>, <span class="key">minlength</span>: <span class="num">3</span> },
+    email:    { <span class="key">required</span>: <span class="kw">true</span>, <span class="key">email</span>: <span class="kw">true</span> },
+    password: { <span class="key">required</span>: <span class="kw">true</span>, <span class="key">minlength</span>: <span class="num">6</span> },
+    terms:    { <span class="key">required</span>: <span class="kw">true</span> },
+  },
+  <span class="key">submitHandler</span>(<span class="key">form</span>) {
+    <span class="cm">// called only when form is valid</span>
+    form.submit();
+  }
+});</pre>
+</div>
+
+<!-- Scripts -->
+<script src="../dist/validate.js"></script>
+<script src="../dist/locales/en.js"></script>
+<script src="../dist/locales/cs.js"></script>
+<script src="../dist/locales/sk.js"></script>
+<script src="../dist/locales/de.js"></script>
+<script>
+  // ── Locale switcher ──────────────────────────────────────────────────────
+  let currentLocale = "en";
+  validate.setLocale("en");
+
+  document.querySelectorAll(".locale-bar button").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".locale-bar button").forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
+      currentLocale = this.dataset.locale;
+      validate.setLocale(currentLocale);
+      // Reset formuláře a znovu inicializuj, aby se projevily nové zprávy
+      v.resetForm();
+      document.getElementById("successBox").style.display = "none";
+    });
+  });
+
+  // ── Inicializace validátoru ──────────────────────────────────────────────
+  const v = validate("#demoForm", {
+
+    rules: {
+      username:  { required: true, minlength: 3, maxlength: 20 },
+      email:     { required: true, email: true },
+      website:   { url: true },
+      age:       { required: true, range: [18, 99] },
+      password:  { required: true, minlength: 6 },
+      password2: { required: true, equalTo: "#password" },
+      terms:     { required: true },
+    },
+
+    showErrors(errorMap, errorList) {
+      const badge = document.getElementById("badge");
+      badge.textContent  = errorList.length;
+      badge.className    = "err-badge" + (errorList.length === 0 ? " zero" : "");
+    },
+
+    submitHandler(form) {
+      document.getElementById("successBox").style.display = "block";
+      form.reset();
+      v.resetForm();
+      const badge = document.getElementById("badge");
+      badge.textContent = "0";
+      badge.className   = "err-badge zero";
+    },
+  });
+</script>
+</body>
+</html>

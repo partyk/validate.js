@@ -1,0 +1,40 @@
+{
+  "name": "@partyk/validate.js",
+  "version": "1.0.0",
+  "description": "Vanilla JS form validation — jQuery Validation Plugin compatible syntax, no dependencies.",
+  "main": "dist/validate.js",
+  "module": "dist/validate.esm.js",
+  "browser": "dist/validate.min.js",
+  "files": [
+    "dist/",
+    "locales/",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "minify": "node scripts/minify.js",
+    "release": "npm run build && npm run minify",
+    "prepublishOnly": "npm run release"
+  },
+  "keywords": [
+    "validation",
+    "form",
+    "vanilla",
+    "jquery-validation",
+    "no-dependencies"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/partyk/validate.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/partyk/validate.js/issues"
+  },
+  "homepage": "https://github.com/partyk/validate.js#readme",
+  "devDependencies": {
+    "terser": "^5.46.2"
+  }
+}
