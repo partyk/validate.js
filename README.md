@@ -2,8 +2,8 @@
 
 **Vanilla JS form validation** — jQuery Validation Plugin compatible syntax, zero dependencies.
 
-[![npm](https://img.shields.io/npm/v/@yourusername/validate.js)](https://www.npmjs.com/package/@yourusername/validate.js)
-[![license](https://img.shields.io/npm/l/@yourusername/validate.js)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@partyk/validate.js)](https://www.npmjs.com/package/@partyk/validate.js)
+[![license](https://img.shields.io/npm/l/@partyk/validate.js)](LICENSE)
 [![size](https://img.shields.io/badge/minzipped-~4kb-blue)](dist/validate.min.js)
 
 Drop-in replacement for [jQuery Validation Plugin](https://jqueryvalidation.org/) — same `rules`, `messages`, `submitHandler` and all other options, no jQuery required.
@@ -54,7 +54,7 @@ Or via CDN:
 ### ES Module
 
 ```js
-import validate from '@yourusername/validate.js';
+import validate from '@partyk/validate.js';
 
 validate('#myForm', { rules: { ... } });
 ```
@@ -153,8 +153,8 @@ validate('#myForm', {
 ### ES Module
 
 ```js
-import validate from '@yourusername/validate.js';
-import cs from '@yourusername/validate.js/locales/cs.js';
+import validate from '@partyk/validate.js';
+import cs from '@partyk/validate.js/locales/cs.js';
 
 validate.addLocale('cs', cs);
 validate.setLocale('cs');

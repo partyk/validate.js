@@ -1,6 +1,6 @@
 {
   "name": "@partyk/validate.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Vanilla JS form validation — jQuery Validation Plugin compatible syntax, no dependencies.",
   "main": "dist/validate.js",
   "module": "dist/validate.esm.js",

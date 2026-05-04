@@ -31,7 +31,7 @@ const terserOptions = {
 async function minifyFile(inputPath, outputPath) {
   const source = fs.readFileSync(inputPath, "utf8");
   // Přidáme licenční komentář na začátek
-  const withBanner = `/*! validate.js | MIT License | https://github.com/yourusername/validate.js */\n` + source;
+  const withBanner = `/*! validate.js | MIT License | https://github.com/partyk/validate.js */\n` + source;
   const result = await minify(withBanner, terserOptions);
   fs.writeFileSync(outputPath, result.code, "utf8");
   const origSize = (source.length / 1024).toFixed(1);
