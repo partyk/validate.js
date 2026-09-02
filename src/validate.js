@@ -2,7 +2,7 @@
  * validate.js — Vanilla JS alternativa k jQuery Validation Plugin
  * Syntaxe co nejbližší https://jqueryvalidation.org/
  *
- * @version 1.0.0
+ * @version 1.0.4
  * @license MIT
  * @see https://github.com/yourusername/validate.js
  */
@@ -23,6 +23,14 @@
   // ─── Vestavěné validační metody ────────────────────────────────────────────
 
   const methods = {
+    /**
+     * Ověří, zda je pole povinné a zda obsahuje hodnotu.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {boolean} param Příznak, zda je pravidlo aktivní.
+     * @returns {boolean} True, pokud je hodnota validní nebo pokud pravidlo není aktivní.
+     */
     required(value, element, param) {
       if (!param) return true;
       if (element.type === "checkbox" || element.type === "radio") {
@@ -43,62 +51,160 @@
       return value.trim() !== "";
     },
 
+    /**
+     * Ověří minimální délku hodnoty.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number|string} param Minimální délka.
+     * @returns {boolean} True, pokud má hodnota minimální počet znaků.
+     */
     minlength(value, element, param) {
       return value.trim().length >= parseInt(param, 10);
     },
 
+    /**
+     * Ověří maximální délku hodnoty.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number|string} param Maximální délka.
+     * @returns {boolean} True, pokud hodnota nepřesahuje maximální délku.
+     */
     maxlength(value, element, param) {
       return value.trim().length <= parseInt(param, 10);
     },
 
+    /**
+     * Ověří, zda délka hodnoty leží v daném rozsahu.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number[]} param Rozsah [min, max].
+     * @returns {boolean} True, pokud je délka v rozsahu.
+     */
     rangelength(value, element, param) {
       const len = value.trim().length;
       return len >= param[0] && len <= param[1];
     },
 
+    /**
+     * Ověří menší nebo rovnou minimální hranici číselné hodnoty.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number|string} param Minimální povolená hodnota.
+     * @returns {boolean} True, pokud je hodnota větší nebo rovna limitu.
+     */
     min(value, element, param) {
       return parseFloat(value) >= parseFloat(param);
     },
 
+    /**
+     * Ověří, zda hodnota nepřesahuje maximální hranici.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number|string} param Maximální povolená hodnota.
+     * @returns {boolean} True, pokud je hodnota menší nebo rovna limitu.
+     */
     max(value, element, param) {
       return parseFloat(value) <= parseFloat(param);
     },
 
+    /**
+     * Ověří, zda hodnota leží v zadaném numerickém rozsahu.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number[]} param Rozsah [min, max].
+     * @returns {boolean} True, pokud hodnota leží v rozsahu.
+     */
     range(value, element, param) {
       const v = parseFloat(value);
       return v >= param[0] && v <= param[1];
     },
 
+    /**
+     * Ověří, zda hodnota je celočíselným násobkem zadaného kroku.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {number|string} param Velikost kroku.
+     * @returns {boolean} True, pokud je hodnota násobkem kroku.
+     */
     step(value, element, param) {
       const v = parseFloat(value);
       const s = parseFloat(param);
       return Math.abs((v / s) % 1) < 1e-10 || Math.abs((v / s) % 1 - 1) < 1e-10;
     },
 
+    /**
+     * Ověří formát e-mailové adresy.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud je e-mail ve validním formátu.
+     */
     email(value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     },
 
+    /**
+     * Ověří, zda je hodnota validní URL.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud je URL platná.
+     */
     url(value) {
       try { new URL(value); return true; } catch { return false; }
     },
 
+    /**
+     * Ověří, zda je hodnota platné datum.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud je datum parsovatelný.
+     */
     date(value) {
       return !isNaN(Date.parse(value));
     },
 
+    /**
+     * Ověří, zda je hodnota datum v ISO formátu YYYY-MM-DD.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud má datum správný ISO formát a je validní.
+     */
     dateISO(value) {
       return /^\d{4}-\d{2}-\d{2}$/.test(value) && !isNaN(Date.parse(value));
     },
 
+    /**
+     * Ověří, zda je hodnota validní číslo.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud má hodnota správný numerický formát.
+     */
     number(value) {
       return /^-?(\d+|\d*\.\d+)$/.test(value);
     },
 
+    /**
+     * Ověří, zda obsahuje pouze číslice.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud hodnota obsahuje pouze čísla.
+     */
     digits(value) {
       return /^\d+$/.test(value);
     },
 
+    /**
+     * Ověří číslo kreditní karty pomocí Luhnova algoritmu.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @returns {boolean} True, pokud je číslo kreditní karty validní.
+     */
     creditcard(value) {
       const s = value.replace(/\s|-/g, "");
       if (!/^\d{13,19}$/.test(s)) return false;
@@ -113,6 +219,14 @@
       return sum % 10 === 0;
     },
 
+    /**
+     * Ověří, zda hodnota odpovídá hodnotě jiného pole.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {string|HTMLElement} param Selektor nebo odkaz na cílový element.
+     * @returns {boolean} True, pokud se hodnota shoduje s hodnotou cílového pole.
+     */
     equalTo(value, element, param) {
       const target =
         typeof param === "string"
@@ -121,11 +235,27 @@
       return target ? value === target.value : false;
     },
 
+    /**
+     * Ověří, zda hodnota odpovídá zadanému regulárnímu výrazu.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {RegExp|string} param Regulární výraz nebo jeho text.
+     * @returns {boolean} True, pokud hodnota splňuje vzor.
+     */
     pattern(value, element, param) {
       const re = param instanceof RegExp ? param : new RegExp(param);
       return re.test(value);
     },
 
+    /**
+     * Ověří hodnotu asynchronně přes vzdálený server.
+     *
+     * @param {string} value Aktuální hodnota pole.
+     * @param {HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement} element Validovaný element.
+     * @param {string|Object} param Adresa endpointu nebo konfigurační objekt pro remote validaci.
+     * @returns {Promise<boolean>} Promise s výsledkem remote validace.
+     */
     remote(value, element, param) {
       const url = typeof param === "string" ? param : param.url;
       const method = (param && param.type) || "GET";
