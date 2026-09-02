@@ -28,9 +28,17 @@
       if (element.type === "checkbox" || element.type === "radio") {
         const name = element.name;
         const form = element.form;
-        return form
-          ? Array.from(form.elements[name] || []).some((el) => el.checked)
-          : element.checked;
+        if (!form) return element.checked;
+
+        const group = form.elements[name];
+        if (!group) return element.checked;
+
+        const controls =
+          typeof group.length === "number" && !group.type
+            ? Array.from(group)
+            : [group];
+
+        return controls.some((el) => el && el.checked);
       }
       return value.trim() !== "";
     },
