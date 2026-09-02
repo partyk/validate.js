@@ -275,8 +275,8 @@
       if (el.type === "email") html5.email = true;
       if (el.type === "url") html5.url = true;
       if (el.type === "number") html5.number = true;
-      if (el.min !== "") html5.min = el.min;
-      if (el.max !== "") html5.max = el.max;
+      if (el.hasAttribute("min")) html5.min = el.getAttribute("min");
+      if (el.hasAttribute("max")) html5.max = el.getAttribute("max");
       if (el.step && el.step !== "any") html5.step = el.step;
       if (el.minLength > 0) html5.minlength = el.minLength;
       if (el.maxLength >= 0 && el.maxLength < 524288) html5.maxlength = el.maxLength;
